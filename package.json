@@ -1,0 +1,26 @@
+{
+  "name": "api_v1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/michalfalat/api_v1.git"
+  },
+  "author": "Michal Falat",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/michalfalat/api_v1/issues"
+  },
+  "homepage": "https://github.com/michalfalat/api_v1#readme",
+  "dependencies": {
+    "@hapi/joi": "^17.1.1",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.10.3"
+  }
+}
