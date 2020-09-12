@@ -1,7 +1,8 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import authRoute from './routes/auth';
+import * as authController from './controllers/auth.controller';
 import * as dotenv from 'dotenv';
+import { verifyToken }  from './core/middlewares/verify-token';
 const app = express();
 
 dotenv.config();
@@ -9,14 +10,17 @@ dotenv.config();
 mongoose.connect(process.env.DB_CONNECT,
     { useNewUrlParser: true, useUnifiedTopology: true },
     () => {
-        console.log('Connected to DB')
+        console.log('Connected to DB!')
     }
 );
 
-
-
 // Middlewares
 app.use(express.json());
-app.use('/api/user', authRoute);
 
-app.listen(process.env.PORT, () => console.log(`App is running on port ${process.env.PORT}`));
+// Routes
+app.post('/api/auth/register', authController.register);
+app.post('/api/auth/login', authController.login);
+app.post('/api/auth/logout', authController.logout);
+app.get('/api/auth/userInfo', [verifyToken], authController.userInfo);
+
+export default app;

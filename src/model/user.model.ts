@@ -1,6 +1,10 @@
-// const mongoose = require('mongoose');
+import { Schema, model, Document } from 'mongoose'
 
-import { Schema, model } from 'mongoose'
+export interface IUser extends Document {
+    name: string;
+    email: string;
+    password: string;
+}
 
 const userSchema = new Schema({
     name: {
@@ -24,5 +28,5 @@ const userSchema = new Schema({
     timestamps: true
 })
 
-const UserModel = model('User', userSchema);
+const UserModel = model<IUser>('User', userSchema);
 export default UserModel;
