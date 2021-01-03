@@ -1,0 +1,8 @@
+{
+  "error.notFound": "Requested source could not be found",
+  "error.accessDenied": "Access denied",
+  "error.invalidToken": "Invalid token",
+  "error.invalidCredentials": "Invalid credentials",
+  "error.existingUser": "User already exists",
+  "error.notLoggedIn": "You are not logged in. Please login"
+}

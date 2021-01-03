@@ -1,10 +1,21 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model, Document } from 'mongoose';
+
+export enum UserRole {
+  USER = 'USER',
+  ADMIN = 'ADMIN',
+  SUPERADMIN = 'SUPERADMIN',
+}
 
 export interface IUser extends Document {
   name: string;
   surname: string;
   email: string;
   password: string;
+  roles: UserRole[];
+  obsolete: boolean;
+  phone: string;
+  emailVerified: boolean;
+  phoneVerified: boolean;
 }
 
 const userSchema = new Schema(
@@ -27,16 +38,34 @@ const userSchema = new Schema(
       min: 6,
       max: 255,
     },
+    phone: {
+      type: String,
+      min: 6,
+      max: 255,
+    },
     password: {
       type: String,
       required: true,
       max: 1024,
     },
+    roles: {
+      type: Array,
+      required: true,
+    },
+    obsolete: {
+      default: false,
+    },
+    emailVerified: {
+      default: false,
+    },
+    phoneVerified: {
+      default: false,
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-const UserModel = model<IUser>("User", userSchema);
+const UserModel = model<IUser>('User', userSchema);
 export default UserModel;
