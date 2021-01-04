@@ -36,9 +36,11 @@ app.use(express.json());
 app.post('/api/auth/register', authController.register);
 app.post('/api/auth/login', authController.login);
 app.post('/api/auth/logout', authController.logout);
-app.get('/api/auth/user-info', [verifyToken], authController.userInfo);
+app.post('/api/auth/user-info', [verifyToken], authController.userInfo);
+app.get('/api/auth/change-password', [verifyToken], authController.changePassword);
 app.get('/api/auth/users', [verifyToken, verifyRole(UserRole.ADMIN)], authController.listOfUsers);
 
+// Error handler
 app.use(handleErrors);
 
 export default app;

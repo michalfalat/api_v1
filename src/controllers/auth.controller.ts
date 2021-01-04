@@ -5,7 +5,7 @@ import * as authService from './../core/services/auth.service';
 export const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const registerResponse = await authService.register(req.body);
-    res.send(registerResponse).json();
+    res.send(registerResponse);
   } catch (err) {
     next(err);
   }
@@ -15,7 +15,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = await authService.login(req.body);
-    res.send({ token }).json();
+    res.send(token);
   } catch (err) {
     next(err);
   }
@@ -25,7 +25,17 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 export const userInfo = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userDetail = await authService.userInfo(res);
-    res.send(userDetail).json();
+    res.send(userDetail);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// CHANGE PASSWORD
+export const changePassword = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const changeResult = await authService.changePassword(req.body, res);
+    res.send(changeResult);
   } catch (err) {
     next(err);
   }
@@ -35,7 +45,7 @@ export const userInfo = async (req: Request, res: Response, next: NextFunction) 
 export const listOfUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const users = await authService.listOfUsers();
-    res.send(users).json();
+    res.send(users);
   } catch (err) {
     next(err);
   }
@@ -43,7 +53,7 @@ export const listOfUsers = async (req: Request, res: Response, next: NextFunctio
 
 export const logout = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    res.send({}).json();
+    res.send({});
   } catch (err) {
     next(err);
   }

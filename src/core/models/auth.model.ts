@@ -28,10 +28,20 @@ export interface IUserRegistrationResponse {
 }
 
 export interface IUserLoginRequest {
+  remember?: boolean;
   email: string;
   password: string;
 }
 
 export interface IUserLoginResponse {
   token: string;
+}
+
+export interface IUserChangePasswordRequest {
+  oldPassword: string;
+  newPassword: string;
+}
+
+export interface IUserChangePasswordResponse {
+  success: boolean;
 }

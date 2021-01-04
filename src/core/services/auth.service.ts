@@ -2,11 +2,13 @@ import { Response } from 'express';
 import { compare, genSalt, hash } from 'bcrypt';
 import { __ } from 'i18n';
 import UserEntity, { UserRole } from '../entities/user.entity';
-import { loginUserSchema, registerUserSchema } from '../validations/validations';
+import { changePasswordSchema, loginUserSchema, registerUserSchema } from '../validations/auth.validations';
 import { BadRequest, NotFound } from '../utils/errors';
 import * as jwt from 'jsonwebtoken';
 import { userDetailMappper, userListMappper, userRegistrationMappper } from '../mappers/auth.mapper';
 import {
+  IUserChangePasswordRequest,
+  IUserChangePasswordResponse,
   IUserLoginRequest,
   IUserLoginResponse,
   IUserRegistrationRequest,
@@ -66,13 +68,41 @@ export const login = async (loginUser: IUserLoginRequest): Promise<IUserLoginRes
 };
 
 // USER INFO
-export const userInfo = async (request: Response): Promise<IUserResponse> => {
-  const token = request.locals.jwtToken;
+export const userInfo = async (response: Response): Promise<IUserResponse> => {
+  const token = response.locals.jwtToken;
   const user = await UserEntity.findOne({ _id: token.id });
   if (!user) {
     throw new NotFound(__('error.notFound'));
   }
   return userDetailMappper(user);
+};
+
+// CHANGE PASSWORD
+export const changePassword = async (
+  changePasswordRequest: IUserChangePasswordRequest,
+  response: Response,
+): Promise<IUserChangePasswordResponse> => {
+  const { error } = changePasswordSchema(changePasswordRequest);
+  if (!!error) {
+    throw new BadRequest(error.details[0].message);
+  }
+  const token = response.locals.jwtToken;
+  const user = await UserEntity.findOne({ _id: token.id });
+  if (!user) {
+    throw new NotFound(__('error.notFound'));
+  }
+
+  const validPassword = await compare(changePasswordRequest.oldPassword, user.password);
+  if (!validPassword) {
+    throw new BadRequest(__('error.invalidCredentials'));
+  }
+
+  const salt = await genSalt(10);
+  const hashedPassword = await hash(changePasswordRequest.newPassword, salt);
+
+  await UserEntity.updateOne({ _id: token.id }, { $set: { password: hashedPassword } });
+
+  return { success: true };
 };
 
 // LIST OF USERS
