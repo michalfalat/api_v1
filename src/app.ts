@@ -7,8 +7,9 @@ import * as path from 'path';
 import * as cors from 'cors';
 import { verifyToken } from './core/middlewares/verify-token';
 import { verifyRole } from './core/middlewares/verify-role';
-import { UserRole } from './model/user.model';
+import { UserRole } from './core/entities/user.entity';
 import cookieParser from 'cookie-parser';
+import { handleErrors } from './core/utils/error-handle';
 
 const app = express();
 
@@ -37,5 +38,7 @@ app.post('/api/auth/login', authController.login);
 app.post('/api/auth/logout', authController.logout);
 app.get('/api/auth/user-info', [verifyToken], authController.userInfo);
 app.get('/api/auth/users', [verifyToken, verifyRole(UserRole.ADMIN)], authController.listOfUsers);
+
+app.use(handleErrors);
 
 export default app;

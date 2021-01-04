@@ -1,4 +1,4 @@
-import { UserRole } from '../../model/user.model';
+import { UserRole } from '../entities/user.entity';
 
 export interface IUserResponse {
   name: string;
@@ -10,6 +10,12 @@ export interface IUserResponse {
   phoneVerified: boolean;
 }
 
+export interface IUserRegistrationRequest {
+  email: string;
+  password: string;
+  name?: string;
+}
+
 export interface IUserRegistrationResponse {
   name: string;
   surname: string;
@@ -19,4 +25,13 @@ export interface IUserRegistrationResponse {
   emailVerified: boolean;
   phoneVerified: boolean;
   verificationNeeded: boolean;
+}
+
+export interface IUserLoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface IUserLoginResponse {
+  token: string;
 }

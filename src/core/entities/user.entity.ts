@@ -53,12 +53,15 @@ const userSchema = new Schema(
       required: true,
     },
     obsolete: {
+      type: Boolean,
       default: false,
     },
     emailVerified: {
+      type: Boolean,
       default: false,
     },
     phoneVerified: {
+      type: Boolean,
       default: false,
     },
   },
@@ -67,5 +70,5 @@ const userSchema = new Schema(
   },
 );
 
-const UserModel = model<IUser>('User', userSchema);
-export default UserModel;
+const UserEntity = model<IUser>('User', userSchema);
+export default UserEntity;

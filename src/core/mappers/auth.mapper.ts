@@ -1,5 +1,5 @@
-import { IUser } from '../../model/user.model';
-import { IUserRegistrationResponse, IUserResponse } from '../responses/auth.response';
+import { IUser } from '../entities/user.entity';
+import { IUserRegistrationResponse, IUserResponse } from '../models/auth.model';
 
 export const userListMappper = (users: IUser[]): IUserResponse[] =>
   users?.map(user => ({
