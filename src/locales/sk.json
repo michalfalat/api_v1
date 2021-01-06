@@ -4,5 +4,14 @@
   "error.invalidToken": "Nesprávny token",
   "error.invalidCredentials": "Nesprávne prihlasovacie údaje",
   "error.existingUser": "Používateľ už existuje",
-  "error.notLoggedIn": "Používateľ nie je prihlásený"
+  "error.notLoggedIn": "Používateľ nie je prihlásený",
+  "general.firstName": "Meno",
+  "general.language": "Jazyk",
+  "general.profile.title": "Môj profil",
+  "general.register.title": "Registrácia",
+  "general.login.title": "Prihlásenie",
+  "general.logout": "Odhlásiť",
+  "general.email": "Email",
+  "general.password": "Heslo",
+  "general.login.button": "Prihlásiť"
 }

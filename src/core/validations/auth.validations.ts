@@ -5,7 +5,7 @@ export const registerUserSchema = (data: IUserRegistrationRequest): Joi.Validati
   const schema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required(),
-    name: Joi.string().min(2).optional(),
+    name: Joi.string().min(2).optional().allow(null, ''),
   });
   return schema.validate(data);
 };

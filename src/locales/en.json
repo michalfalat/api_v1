@@ -4,5 +4,14 @@
   "error.invalidToken": "Invalid token",
   "error.invalidCredentials": "Invalid credentials",
   "error.existingUser": "User already exists",
-  "error.notLoggedIn": "You are not logged in. Please login"
+  "error.notLoggedIn": "You are not logged in. Please login",
+  "general.firstName": "First name",
+  "general.language": "Language",
+  "general.profile.title": "My profile",
+  "general.register.title": "Sign up",
+  "general.login.title": "Sign In",
+  "general.logout": "Logout",
+  "general.email": "Email",
+  "general.password": "Password",
+  "general.login.button": "Sign in"
 }

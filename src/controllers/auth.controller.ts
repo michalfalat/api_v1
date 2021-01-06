@@ -4,7 +4,7 @@ import * as authService from './../core/services/auth.service';
 // REGISTER
 export const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const registerResponse = await authService.register(req.body);
+    const registerResponse = await authService.register(req, res);
     res.send(registerResponse);
   } catch (err) {
     next(err);
@@ -14,7 +14,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 // LOGIN
 export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = await authService.login(req.body);
+    const token = await authService.login(req, res);
     res.send(token);
   } catch (err) {
     next(err);
@@ -24,7 +24,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 // USER INFO
 export const userInfo = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userDetail = await authService.userInfo(res);
+    const userDetail = await authService.userInfo(req, res);
     res.send(userDetail);
   } catch (err) {
     next(err);
@@ -34,7 +34,7 @@ export const userInfo = async (req: Request, res: Response, next: NextFunction) 
 // CHANGE PASSWORD
 export const changePassword = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const changeResult = await authService.changePassword(req.body, res);
+    const changeResult = await authService.changePassword(req, res);
     res.send(changeResult);
   } catch (err) {
     next(err);
@@ -44,7 +44,7 @@ export const changePassword = async (req: Request, res: Response, next: NextFunc
 // LIST OF USERS
 export const listOfUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const users = await authService.listOfUsers();
+    const users = await authService.listOfUsers(req, res);
     res.send(users);
   } catch (err) {
     next(err);

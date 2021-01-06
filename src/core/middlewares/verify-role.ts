@@ -7,7 +7,6 @@ import { AccessForbidden } from '../utils/errors';
 export const verifyRole = (role: UserRole): any => (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization;
   const decodedToken = jwt.decode(token, { complete: true });
-  console.log('decodedToken :>> ', decodedToken);
   if (decodedToken?.['roles']?.includes(role)) next();
-  else throw new AccessForbidden(__('error.accessDenied'));
+  else throw new AccessForbidden(req.__('error.accessDenied'));
 };

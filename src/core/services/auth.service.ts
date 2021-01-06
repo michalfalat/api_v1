@@ -1,7 +1,6 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { compare, genSalt, hash } from 'bcrypt';
-import { __ } from 'i18n';
-import UserEntity, { UserRole } from '../entities/user.entity';
+import UserEntity, { IUser, UserRole } from '../entities/user.entity';
 import { changePasswordSchema, loginUserSchema, registerUserSchema } from '../validations/auth.validations';
 import { BadRequest, NotFound } from '../utils/errors';
 import * as jwt from 'jsonwebtoken';
@@ -15,9 +14,12 @@ import {
   IUserRegistrationResponse,
   IUserResponse,
 } from '../models/auth.model';
+import { EmailTemplate } from '../models/email.model';
+import { sendEmail } from './email.service';
 
 // REGISTER
-export const register = async (registerUser: IUserRegistrationRequest): Promise<IUserRegistrationResponse> => {
+export const register = async (request: Request, response: Response): Promise<IUserRegistrationResponse> => {
+  const registerUser: IUserRegistrationRequest = request.body;
   const verificationNeeded = false;
   const { error } = registerUserSchema(registerUser);
   if (!!error) {
@@ -26,7 +28,7 @@ export const register = async (registerUser: IUserRegistrationRequest): Promise<
 
   const existingUser = await UserEntity.findOne({ email: registerUser.email });
   if (!!existingUser) {
-    throw new BadRequest(__('error.existingUser'));
+    throw new BadRequest(request.__('error.existingUser'));
   }
 
   const salt = await genSalt(10);
@@ -47,7 +49,8 @@ export const register = async (registerUser: IUserRegistrationRequest): Promise<
 };
 
 // LOGIN
-export const login = async (loginUser: IUserLoginRequest): Promise<IUserLoginResponse> => {
+export const login = async (request: Request, response: Response): Promise<IUserLoginResponse> => {
+  const loginUser: IUserLoginRequest = request.body;
   const { error } = loginUserSchema(loginUser);
   if (!!error) {
     throw new BadRequest(error.details[0].message);
@@ -55,12 +58,12 @@ export const login = async (loginUser: IUserLoginRequest): Promise<IUserLoginRes
 
   const user = await UserEntity.findOne({ email: loginUser.email });
   if (!user) {
-    throw new BadRequest(__('error.invalidCredentials'));
+    throw new BadRequest(request.__('error.invalidCredentials'));
   }
 
   const validPassword = await compare(loginUser.password, user.password);
   if (!validPassword) {
-    throw new BadRequest(__('error.invalidCredentials'));
+    throw new BadRequest(request.__('error.invalidCredentials'));
   }
 
   const token = jwt.sign({ id: user._id, name: user.name, roles: user.roles }, process.env.TOKEN_SECRET);
@@ -68,20 +71,19 @@ export const login = async (loginUser: IUserLoginRequest): Promise<IUserLoginRes
 };
 
 // USER INFO
-export const userInfo = async (response: Response): Promise<IUserResponse> => {
+export const userInfo = async (request: Request, response: Response): Promise<IUserResponse> => {
   const token = response.locals.jwtToken;
   const user = await UserEntity.findOne({ _id: token.id });
   if (!user) {
-    throw new NotFound(__('error.notFound'));
+    throw new NotFound(request.__('error.notFound'));
   }
+  await sendVerifyEmail(request, response, user);
   return userDetailMappper(user);
 };
 
 // CHANGE PASSWORD
-export const changePassword = async (
-  changePasswordRequest: IUserChangePasswordRequest,
-  response: Response,
-): Promise<IUserChangePasswordResponse> => {
+export const changePassword = async (request: Request, response: Response): Promise<IUserChangePasswordResponse> => {
+  const changePasswordRequest: IUserChangePasswordRequest = request.body;
   const { error } = changePasswordSchema(changePasswordRequest);
   if (!!error) {
     throw new BadRequest(error.details[0].message);
@@ -89,12 +91,12 @@ export const changePassword = async (
   const token = response.locals.jwtToken;
   const user = await UserEntity.findOne({ _id: token.id });
   if (!user) {
-    throw new NotFound(__('error.notFound'));
+    throw new NotFound(request.__('error.notFound'));
   }
 
   const validPassword = await compare(changePasswordRequest.oldPassword, user.password);
   if (!validPassword) {
-    throw new BadRequest(__('error.invalidCredentials'));
+    throw new BadRequest(request.__('error.invalidCredentials'));
   }
 
   const salt = await genSalt(10);
@@ -106,10 +108,24 @@ export const changePassword = async (
 };
 
 // LIST OF USERS
-export const listOfUsers = async (): Promise<IUserResponse[]> => {
+export const listOfUsers = async (request: Request, response: Response): Promise<IUserResponse[]> => {
   const users = await UserEntity.find();
   if (!users) {
-    throw new NotFound(__('error.notFound'));
+    throw new NotFound(request.__('error.notFound'));
   }
   return userListMappper(users);
+};
+
+export const sendVerifyEmail = async (request: Request, response: Response, user: IUser): Promise<void> => {
+  const email: EmailTemplate<'verifyEmail'> = {
+    template: 'verifyEmail',
+    params: {
+      name: user?.name?.length ? `${user.name} ${user.surname}` : user.email,
+      verifyToken: '3as4d3ad43awd43aa3wd',
+    },
+    to: user.email,
+    lang: request.getLocale(),
+  };
+
+  await sendEmail(email);
 };
